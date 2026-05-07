@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sky Hunter Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+    radial-gradient(circle at top,#12233d,#02060f 70%);
+    font-family:'Poppins',sans-serif;
+    color:white;
+}
+
+/* WRAPPER */
+
+.game-wrapper{
+    width:470px;
+}
+
+/* TOP BAR */
+
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+}
+
+.logo{
+    font-size:34px;
+    font-weight:700;
+    letter-spacing:2px;
+    color:#00e5ff;
+    text-shadow:
+    0 0 12px #00e5ff,
+    0 0 30px #00e5ff;
+}
+
+.score-container{
+    display:flex;
+    gap:12px;
+}
+
+.score-card{
+    min-width:90px;
+    padding:12px 20px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);
+    backdrop-filter:blur(8px);
+    text-align:center;
+    box-shadow:
+    0 0 20px rgba(0,229,255,0.2);
+}
+
+.label{
+    font-size:12px;
+    color:#cbd5e1;
+}
+
+.value{
+    font-size:28px;
+    font-weight:700;
+}
+
+/* GAME AREA */
+
+.game-container{
+    position:relative;
+    width:470px;
+    height:760px;
+    overflow:hidden;
+    border-radius:28px;
+    border:2px solid rgba(255,255,255,0.12);
+
+    box-shadow:
+    0 0 40px rgba(0,229,255,0.25),
+    inset 0 0 20px rgba(255,255,255,0.04);
+}
+
+canvas{
+    display:block;
+}
+
+/* SCREEN */
+
+.screen{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    backdrop-filter:blur(6px);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:20;
+}
+
+.hidden{
+    display:none;
+}
+
+.panel{
+    width:85%;
+    padding:35px;
+    border-radius:28px;
+
+    background:
+    rgba(255,255,255,0.08);
+
+    border:
+    1px solid rgba(255,255,255,0.12);
+
+    text-align:center;
+
+    box-shadow:
+    0 0 35px rgba(0,229,255,0.25);
+}
+
+.panel h1{
+    font-size:42px;
+    margin-bottom:15px;
+    color:#00e5ff;
+
+    text-shadow:
+    0 0 10px #00e5ff,
+    0 0 30px #00e5ff;
+}
+
+.panel p{
+    margin-bottom:25px;
+    color:#dbeafe;
+    font-size:18px;
+}
+
+/* BUTTONS */
+
+.main-btn{
+    border:none;
+    outline:none;
+
+    padding:16px 42px;
+
+    border-radius:50px;
+
+    font-size:18px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:
+    linear-gradient(135deg,#00e5ff,#0066ff);
+
+    box-shadow:
+    0 0 20px #00e5ff,
+    0 0 45px rgba(0,229,255,0.5);
+
+    transition:0.3s;
+}
+
+.main-btn:hover{
+    transform:scale(1.08);
+
+    box-shadow:
+    0 0 35px #00e5ff,
+    0 0 60px rgba(0,229,255,0.9);
+}
+
+/* CONTROLS */
+
+.controls{
+    position:absolute;
+    top:15px;
+    right:15px;
+
+    display:flex;
+    gap:10px;
+
+    z-index:10;
+}
+
+.icon-btn{
+    width:52px;
+    height:52px;
+
+    border:none;
+    border-radius:50%;
+
+    background:
+    rgba(255,255,255,0.1);
+
+    color:white;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    backdrop-filter:blur(6px);
+
+    box-shadow:
+    0 0 18px rgba(255,255,255,0.2);
+
+    transition:0.3s;
+}
+
+.icon-btn:hover{
+    background:#00e5ff;
+    color:black;
+    transform:scale(1.1);
+}
+
+/* BOTTOM */
+
+.bottom-bar{
+    margin-top:14px;
+    text-align:center;
+    letter-spacing:1px;
+    font-weight:600;
+    color:#dbeafe;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game-wrapper">
+
+    <!-- TOP BAR -->
+
+    <div class="top-bar">
+
+        <div class="logo">
+            SKY HUNTER
+        </div>
+
+        <div class="score-container">
+
+            <div class="score-card">
+
+                <div class="label">
+                    SCORE
+                </div>
+
+                <div id="score" class="value">
+                    0
+                </div>
+
+            </div>
+
+            <div class="score-card">
+
+                <div class="label">
+                    BEST
+                </div>
+
+                <div id="best" class="value">
+                    0
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- GAME -->
+
+    <div class="game-container">
+
+        <canvas id="gameCanvas" width="470" height="760"></canvas>
+
+        <!-- START -->
+
+        <div id="startScreen" class="screen">
+
+            <div class="panel">
+
+                <h1>SKY HUNTER</h1>
+
+                <p>
+                    Fly through the glowing pipes and survive.
+                </p>
+
+                <button id="startBtn" class="main-btn">
+                    START GAME
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- GAME OVER -->
+
+        <div id="gameOverScreen" class="screen hidden">
+
+            <div class="panel">
+
+                <h1>GAME OVER</h1>
+
+                <p id="finalScore">
+                    Score : 0
+                </p>
+
+                <button id="restartBtn" class="main-btn">
+                    PLAY AGAIN
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+            <button id="pauseBtn" class="icon-btn">
+                ⏸
+            </button>
+
+            <button id="soundBtn" class="icon-btn">
+                🔊
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="bottom-bar">
+        PRESS SPACE OR CLICK TO FLY
+    </div>
+
+</div>
+
+<script>
+
+window.onload = function(){
+
+// ================= CANVAS =================
+
+const canvas =
+document.getElementById("gameCanvas");
+
+const ctx =
+canvas.getContext("2d");
+
+// ================= UI =================
+
+const scoreText =
+document.getElementById("score");
+
+const bestText =
+document.getElementById("best");
+
+const startScreen =
+document.getElementById("startScreen");
+
+const gameOverScreen =
+document.getElementById("gameOverScreen");
+
+const startBtn =
+document.getElementById("startBtn");
+
+const restartBtn =
+document.getElementById("restartBtn");
+
+const pauseBtn =
+document.getElementById("pauseBtn");
+
+const soundBtn =
+document.getElementById("soundBtn");
+
+const finalScore =
+document.getElementById("finalScore");
+
+// ================= GAME STATE =================
+
+let gameStarted = false;
+let isGameOver = false;
+let paused = false;
+
+let score = 0;
+let speed = 2.8;
+
+let best =
+localStorage.getItem("skyhunter_best") || 0;
+
+bestText.innerText = best;
+
+let soundEnabled = true;
+let shake = 0;
+
+// ================= EAGLE =================
+
+const eagle = {
+
+    x:120,
+    y:350,
+
+    velocity:0,
+
+    gravity:0.22,
+
+    flap:-5.5,
+
+    rotation:0
+};
+
+// ================= PIPES =================
+
+const pipes = [];
+
+const pipeWidth = 90;
+const gap = 220;
+
+// ================= SOUND =================
+
+function playSound(freq,duration){
+
+    if(!soundEnabled) return;
+
+    const audioCtx =
+    new(window.AudioContext ||
+    window.webkitAudioContext)();
+
+    const oscillator =
+    audioCtx.createOscillator();
+
+    const gainNode =
+    audioCtx.createGain();
+
+    oscillator.connect(gainNode);
+
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.type = "triangle";
+
+    oscillator.frequency.value = freq;
+
+    oscillator.start();
+
+    gainNode.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioCtx.currentTime + duration
+    );
+
+    oscillator.stop(
+        audioCtx.currentTime + duration
+    );
+}
+
+// ================= CREATE PIPE =================
+
+function createPipe(){
+
+    const topHeight =
+    Math.random()*250 + 80;
+
+    pipes.push({
+
+        x:canvas.width,
+        top:topHeight,
+        passed:false
+
+    });
+}
+
+// ================= BACKGROUND =================
+
+function drawBackground(){
+
+    const gradient =
+    ctx.createLinearGradient(
+        0,
+        0,
+        0,
+        canvas.height
+    );
+
+    gradient.addColorStop(0,"#081321");
+    gradient.addColorStop(1,"#02050b");
+
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    // STARS
+
+    for(let i=0;i<60;i++){
+
+        ctx.fillStyle =
+        "rgba(255,255,255,0.7)";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            (i*67)%canvas.width,
+            (i*91)%canvas.height,
+            1.5,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+    }
+
+    // MOON
+
+    ctx.shadowColor = "#ffffff";
+    ctx.shadowBlur = 30;
+
+    ctx.fillStyle = "#ffffff";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        380,
+        100,
+        50,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+    // GROUND
+
+    ctx.fillStyle = "#111";
+
+    ctx.fillRect(
+        0,
+        canvas.height - 70,
+        canvas.width,
+        70
+    );
+}
+
+// ================= EAGLE =================
+
+function drawEagle(){
+
+    ctx.save();
+
+    ctx.translate(
+        eagle.x,
+        eagle.y
+    );
+
+    ctx.rotate(
+        eagle.rotation
+    );
+
+    // BODY
+
+    ctx.fillStyle = "#5c5c5c";
+
+    ctx.beginPath();
+
+    ctx.ellipse(
+        0,
+        0,
+        30,
+        18,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    // WING
+
+    ctx.fillStyle = "#3a3a3a";
+
+    ctx.beginPath();
+
+    ctx.moveTo(-5,0);
+    ctx.lineTo(-40,-14);
+    ctx.lineTo(-18,14);
+
+    ctx.fill();
+
+    // HEAD
+
+    ctx.fillStyle = "#d9d9d9";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        22,
+        -8,
+        11,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    // EYE
+
+    ctx.fillStyle = "black";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        24,
+        -10,
+        2,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    // BEAK
+
+    ctx.fillStyle = "#e0a100";
+
+    ctx.beginPath();
+
+    ctx.moveTo(32,-4);
+    ctx.lineTo(48,0);
+    ctx.lineTo(32,4);
+
+    ctx.fill();
+
+    ctx.restore();
+}
+
+// ================= PIPE =================
+
+function drawPipe(x,y,height,isTop){
+
+    const gradient =
+    ctx.createLinearGradient(
+        x,
+        0,
+        x+pipeWidth,
+        0
+    );
+
+    gradient.addColorStop(0,"#145a14");
+    gradient.addColorStop(0.5,"#2ecc71");
+    gradient.addColorStop(1,"#145a14");
+
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(
+        x,
+        y,
+        pipeWidth,
+        height
+    );
+
+    if(isTop){
+
+        ctx.fillStyle = "#27ae60";
+
+        ctx.fillRect(
+            x-8,
+            height-25,
+            pipeWidth+16,
+            25
+        );
+
+    }else{
+
+        ctx.fillStyle = "#27ae60";
+
+        ctx.fillRect(
+            x-8,
+            y,
+            pipeWidth+16,
+            25
+        );
+    }
+
+    ctx.fillStyle =
+    "rgba(255,255,255,0.15)";
+
+    ctx.fillRect(
+        x+10,
+        y,
+        10,
+        height
+    );
+}
+
+// ================= UPDATE =================
+
+function update(){
+
+    if(
+        !gameStarted ||
+        isGameOver ||
+        paused
+    ){
+        return;
+    }
+
+    eagle.velocity += eagle.gravity;
+
+    eagle.y += eagle.velocity;
+
+    eagle.rotation =
+    eagle.velocity * 0.05;
+
+    if(eagle.y < 0){
+
+        eagle.y = 0;
+    }
+
+    if(eagle.y > canvas.height - 90){
+
+        endGame();
+    }
+
+    pipes.forEach((pipe,index)=>{
+
+        pipe.x -= speed;
+
+        if(
+
+            eagle.x + 25 > pipe.x &&
+            eagle.x - 25 < pipe.x + pipeWidth &&
+
+            (
+                eagle.y < pipe.top ||
+                eagle.y > pipe.top + gap
+            )
+
+        ){
+
+            endGame();
+        }
+
+        if(
+            !pipe.passed &&
+            pipe.x < eagle.x
+        ){
+
+            pipe.passed = true;
+
+            score++;
+
+            scoreText.innerText = score;
+
+            playSound(700,0.08);
+
+            speed += 0.03;
+
+            shake = 2;
+        }
+
+        if(pipe.x < -150){
+
+            pipes.splice(index,1);
+        }
+    });
+}
+
+// ================= END GAME =================
+
+function endGame(){
+
+    isGameOver = true;
+
+    shake = 20;
+
+    playSound(120,0.5);
+
+    finalScore.innerText =
+    "Score : " + score;
+
+    if(score > best){
+
+        best = score;
+
+        localStorage.setItem(
+            "skyhunter_best",
+            best
+        );
+
+        bestText.innerText = best;
+    }
+
+    gameOverScreen.classList.remove(
+        "hidden"
+    );
+}
+
+// ================= DRAW =================
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    if(shake > 0){
+
+        ctx.save();
+
+        ctx.translate(
+            Math.random()*6 - 3,
+            Math.random()*6 - 3
+        );
+
+        shake--;
+    }
+
+    drawBackground();
+
+    pipes.forEach(pipe=>{
+
+        drawPipe(
+            pipe.x,
+            0,
+            pipe.top,
+            true
+        );
+
+        drawPipe(
+            pipe.x,
+            pipe.top + gap,
+            canvas.height - pipe.top - gap,
+            false
+        );
+    });
+
+    drawEagle();
+
+    if(shake > 0){
+
+        ctx.restore();
+    }
+}
+
+// ================= LOOP =================
+
+function gameLoop(){
+
+    update();
+
+    draw();
+
+    requestAnimationFrame(gameLoop);
+}
+
+// ================= FLAP =================
+
+function flap(){
+
+    if(
+        !gameStarted ||
+        isGameOver ||
+        paused
+    ){
+        return;
+    }
+
+    eagle.velocity = eagle.flap;
+
+    playSound(300,0.08);
+}
+
+// ================= START =================
+
+function startGame(){
+
+    gameStarted = true;
+
+    isGameOver = false;
+
+    score = 0;
+
+    speed = 2.8;
+
+    eagle.y = 350;
+
+    eagle.velocity = 0;
+
+    pipes.length = 0;
+
+    scoreText.innerText = 0;
+
+    startScreen.classList.add("hidden");
+
+    gameOverScreen.classList.add("hidden");
+}
+
+// ================= PIPE SPAWN =================
+
+setInterval(()=>{
+
+    if(
+        gameStarted &&
+        !isGameOver &&
+        !paused
+    ){
+
+        createPipe();
+    }
+
+},1900);
+
+// ================= CONTROLS =================
+
+document.addEventListener(
+    "keydown",
+    (e)=>{
+
+        if(e.code === "Space"){
+
+            flap();
+        }
+
+        if(e.code === "KeyP"){
+
+            paused = !paused;
+        }
+    }
+);
+
+canvas.addEventListener(
+    "click",
+    flap
+);
+
+startBtn.addEventListener(
+    "click",
+    startGame
+);
+
+restartBtn.addEventListener(
+    "click",
+    startGame
+);
+
+pauseBtn.addEventListener(
+    "click",
+    ()=>{
+
+        paused = !paused;
+
+        pauseBtn.innerText =
+        paused ? "▶" : "⏸";
+    }
+);
+
+soundBtn.addEventListener(
+    "click",
+    ()=>{
+
+        soundEnabled =
+        !soundEnabled;
+
+        soundBtn.innerText =
+        soundEnabled ? "🔊" : "🔇";
+    }
+);
+
+// ================= START =================
+
+gameLoop();
+
+};
+
+</script>
+
+</body>
+</html>
